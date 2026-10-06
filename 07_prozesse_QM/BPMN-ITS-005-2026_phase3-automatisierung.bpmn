@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_BPMN_ITS_005_2026" targetNamespace="http://ki-agentensystem.local/bpmn">
+  <!-- Dokument-Nr. BPMN-ITS-005-2026 | Phase 3 – Automatisierung und Betrieb (Ebene 3, Schritte 24–35) | Version 1.0 (Entwurf) | Stand 05.10.2026
+       Projekt Azure-Datenplattform (Bee Haven). Ebenen-Ansatz; Freigabe Projektleitung offen.
+       Erzeugt mit organisation/Firmenprozesse/generator/bpmn_lib.py – Änderungen bitte im Generator vornehmen. -->
+  <bpmn:collaboration id="Collaboration_1">
+    <bpmn:participant id="Participant_1" name="Phase 3 – Automatisierung und Betrieb (Ebene 3, Schritte 24–35) (BPMN-ITS-005-2026)" processRef="Process_1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_PL" name="Geschäftsführung / Projektleitung">
+        <bpmn:flowNodeRef>GW_K</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_FB" name="Fachbereich (Data Owner)">
+        <bpmn:flowNodeRef>GW_A</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_DE" name="Data Engineer">
+        <bpmn:flowNodeRef>S24</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S25</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S27</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S29</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S31</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S32</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S33</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S34</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S35a</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_ADM" name="IT-Administration (Plattform)">
+        <bpmn:flowNodeRef>S26</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S28</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S30</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S35b</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_SYS" name="System (Azure)">
+        <bpmn:flowNodeRef>E</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="S24" name="24 Master-Pipeline">
+      <bpmn:outgoing>F1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="S25" name="25 Standort-Tabelle hochladen">
+      <bpmn:incoming>F1</bpmn:incoming>
+      <bpmn:outgoing>F2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S26" name="26 Budget-Warnung">
+      <bpmn:incoming>F2</bpmn:incoming>
+      <bpmn:outgoing>F3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:serviceTask id="S27" name="27 Testlauf + Gegenprobe">
+      <bpmn:incoming>F3</bpmn:incoming>
+      <bpmn:incoming>R0</bpmn:incoming>
+      <bpmn:outgoing>F4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GW_K" name="Kosten Spark freigegeben?">
+      <bpmn:incoming>F4</bpmn:incoming>
+      <bpmn:outgoing>F5</bpmn:outgoing>
+      <bpmn:outgoing>R0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="S28" name="28 Synapse + Spark-Pool">
+      <bpmn:incoming>F5</bpmn:incoming>
+      <bpmn:outgoing>F6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S29" name="29 Notebooks importieren">
+      <bpmn:incoming>F6</bpmn:incoming>
+      <bpmn:outgoing>F7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S30" name="30 Rollen Data Factory in Synapse">
+      <bpmn:incoming>F7</bpmn:incoming>
+      <bpmn:outgoing>F8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S31" name="31 Notebook-Aktivität, Erfolgspfad">
+      <bpmn:incoming>F8</bpmn:incoming>
+      <bpmn:incoming>R1</bpmn:incoming>
+      <bpmn:outgoing>F9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S32" name="32 Gold-Pipeline je Stadt">
+      <bpmn:incoming>F9</bpmn:incoming>
+      <bpmn:outgoing>F10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:serviceTask id="S33" name="33 Gesamtlauf + Gegenprobe">
+      <bpmn:incoming>F10</bpmn:incoming>
+      <bpmn:outgoing>F11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GW_A" name="Ergebnis abgenommen?">
+      <bpmn:incoming>F11</bpmn:incoming>
+      <bpmn:outgoing>F12</bpmn:outgoing>
+      <bpmn:outgoing>R1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="S34" name="34 Zweite Stadt (Konfiguration)">
+      <bpmn:incoming>F12</bpmn:incoming>
+      <bpmn:outgoing>F13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S35a" name="35 Trigger, Nebenläufigkeit">
+      <bpmn:incoming>F13</bpmn:incoming>
+      <bpmn:outgoing>F14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S35b" name="35 Warnregeln, Aktionsgruppe">
+      <bpmn:incoming>F14</bpmn:incoming>
+      <bpmn:outgoing>F15</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="E" name="Betrieb: BPMN-ITS-001">
+      <bpmn:incoming>F15</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="S24" targetRef="S25" />
+    <bpmn:sequenceFlow id="F2" sourceRef="S25" targetRef="S26" />
+    <bpmn:sequenceFlow id="F3" sourceRef="S26" targetRef="S27" />
+    <bpmn:sequenceFlow id="F4" sourceRef="S27" targetRef="GW_K" />
+    <bpmn:sequenceFlow id="F5" name="ja" sourceRef="GW_K" targetRef="S28" />
+    <bpmn:sequenceFlow id="F6" sourceRef="S28" targetRef="S29" />
+    <bpmn:sequenceFlow id="F7" sourceRef="S29" targetRef="S30" />
+    <bpmn:sequenceFlow id="F8" sourceRef="S30" targetRef="S31" />
+    <bpmn:sequenceFlow id="F9" sourceRef="S31" targetRef="S32" />
+    <bpmn:sequenceFlow id="F10" sourceRef="S32" targetRef="S33" />
+    <bpmn:sequenceFlow id="F11" sourceRef="S33" targetRef="GW_A" />
+    <bpmn:sequenceFlow id="F12" name="ja" sourceRef="GW_A" targetRef="S34" />
+    <bpmn:sequenceFlow id="F13" sourceRef="S34" targetRef="S35a" />
+    <bpmn:sequenceFlow id="F14" sourceRef="S35a" targetRef="S35b" />
+    <bpmn:sequenceFlow id="F15" sourceRef="S35b" targetRef="E" />
+    <bpmn:sequenceFlow id="R0" name="nein – warten" sourceRef="GW_K" targetRef="S27" />
+    <bpmn:sequenceFlow id="R1" name="nein – nacharbeiten" sourceRef="GW_A" targetRef="S31" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1"><bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1">
+    <bpmndi:BPMNShape id="Participant_1_di" bpmnElement="Participant_1" isHorizontal="true"><omgdc:Bounds x="100" y="80" width="1894" height="525" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_PL_di" bpmnElement="Lane_PL" isHorizontal="true"><omgdc:Bounds x="152" y="80" width="1842" height="105" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_FB_di" bpmnElement="Lane_FB" isHorizontal="true"><omgdc:Bounds x="152" y="185" width="1842" height="105" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_DE_di" bpmnElement="Lane_DE" isHorizontal="true"><omgdc:Bounds x="152" y="290" width="1842" height="105" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_ADM_di" bpmnElement="Lane_ADM" isHorizontal="true"><omgdc:Bounds x="152" y="395" width="1842" height="105" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_SYS_di" bpmnElement="Lane_SYS" isHorizontal="true"><omgdc:Bounds x="152" y="500" width="1842" height="105" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S24_di" bpmnElement="S24"><omgdc:Bounds x="220" y="324" width="36" height="36" /><bpmndi:BPMNLabel><omgdc:Bounds x="190" y="364" width="96" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S25_di" bpmnElement="S25"><omgdc:Bounds x="291" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S26_di" bpmnElement="S26"><omgdc:Bounds x="403" y="412" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S27_di" bpmnElement="S27"><omgdc:Bounds x="515" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="GW_K_di" bpmnElement="GW_K" isMarkerVisible="true"><omgdc:Bounds x="661" y="108" width="50" height="50" /><bpmndi:BPMNLabel><omgdc:Bounds x="631" y="162" width="110" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S28_di" bpmnElement="S28"><omgdc:Bounds x="739" y="412" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S29_di" bpmnElement="S29"><omgdc:Bounds x="851" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S30_di" bpmnElement="S30"><omgdc:Bounds x="963" y="412" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S31_di" bpmnElement="S31"><omgdc:Bounds x="1075" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S32_di" bpmnElement="S32"><omgdc:Bounds x="1187" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S33_di" bpmnElement="S33"><omgdc:Bounds x="1299" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="GW_A_di" bpmnElement="GW_A" isMarkerVisible="true"><omgdc:Bounds x="1445" y="212" width="50" height="50" /><bpmndi:BPMNLabel><omgdc:Bounds x="1415" y="266" width="110" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S34_di" bpmnElement="S34"><omgdc:Bounds x="1523" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S35a_di" bpmnElement="S35a"><omgdc:Bounds x="1635" y="306" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S35b_di" bpmnElement="S35b"><omgdc:Bounds x="1747" y="412" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="E_di" bpmnElement="E"><omgdc:Bounds x="1900" y="534" width="36" height="36" /><bpmndi:BPMNLabel><omgdc:Bounds x="1870" y="574" width="96" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1"><omgdi:waypoint x="256" y="342" /><omgdi:waypoint x="291" y="342" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F2_di" bpmnElement="F2"><omgdi:waypoint x="409" y="342" /><omgdi:waypoint x="406" y="342" /><omgdi:waypoint x="406" y="448" /><omgdi:waypoint x="403" y="448" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3"><omgdi:waypoint x="521" y="448" /><omgdi:waypoint x="518" y="448" /><omgdi:waypoint x="518" y="342" /><omgdi:waypoint x="515" y="342" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4"><omgdi:waypoint x="633" y="342" /><omgdi:waypoint x="647" y="342" /><omgdi:waypoint x="647" y="132" /><omgdi:waypoint x="661" y="132" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F5_di" bpmnElement="F5"><omgdi:waypoint x="711" y="132" /><omgdi:waypoint x="725" y="132" /><omgdi:waypoint x="725" y="448" /><omgdi:waypoint x="739" y="448" /><bpmndi:BPMNLabel><omgdc:Bounds x="729" y="114" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F6_di" bpmnElement="F6"><omgdi:waypoint x="857" y="448" /><omgdi:waypoint x="854" y="448" /><omgdi:waypoint x="854" y="342" /><omgdi:waypoint x="851" y="342" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F7_di" bpmnElement="F7"><omgdi:waypoint x="969" y="342" /><omgdi:waypoint x="966" y="342" /><omgdi:waypoint x="966" y="448" /><omgdi:waypoint x="963" y="448" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F8_di" bpmnElement="F8"><omgdi:waypoint x="1081" y="448" /><omgdi:waypoint x="1078" y="448" /><omgdi:waypoint x="1078" y="342" /><omgdi:waypoint x="1075" y="342" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F9_di" bpmnElement="F9"><omgdi:waypoint x="1193" y="342" /><omgdi:waypoint x="1187" y="342" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F10_di" bpmnElement="F10"><omgdi:waypoint x="1305" y="342" /><omgdi:waypoint x="1299" y="342" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F11_di" bpmnElement="F11"><omgdi:waypoint x="1417" y="342" /><omgdi:waypoint x="1431" y="342" /><omgdi:waypoint x="1431" y="238" /><omgdi:waypoint x="1445" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F12_di" bpmnElement="F12"><omgdi:waypoint x="1495" y="238" /><omgdi:waypoint x="1509" y="238" /><omgdi:waypoint x="1509" y="342" /><omgdi:waypoint x="1523" y="342" /><bpmndi:BPMNLabel><omgdc:Bounds x="1513" y="220" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F13_di" bpmnElement="F13"><omgdi:waypoint x="1641" y="342" /><omgdi:waypoint x="1635" y="342" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F14_di" bpmnElement="F14"><omgdi:waypoint x="1753" y="342" /><omgdi:waypoint x="1750" y="342" /><omgdi:waypoint x="1750" y="448" /><omgdi:waypoint x="1747" y="448" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F15_di" bpmnElement="F15"><omgdi:waypoint x="1865" y="448" /><omgdi:waypoint x="1882" y="448" /><omgdi:waypoint x="1882" y="552" /><omgdi:waypoint x="1900" y="552" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="R0_di" bpmnElement="R0"><omgdi:waypoint x="686" y="158" /><omgdi:waypoint x="686" y="288" /><omgdi:waypoint x="574" y="288" /><omgdi:waypoint x="574" y="306" /><bpmndi:BPMNLabel><omgdc:Bounds x="690" y="270" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="R1_di" bpmnElement="R1"><omgdi:waypoint x="1470" y="262" /><omgdi:waypoint x="1470" y="288" /><omgdi:waypoint x="1134" y="288" /><omgdi:waypoint x="1134" y="306" /><bpmndi:BPMNLabel><omgdc:Bounds x="1474" y="270" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

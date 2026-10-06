@@ -1,0 +1,36 @@
+# Python / Jupyter
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+# macOS
+.DS_Store
+# Daten vorerst NICHT veröffentlichen (Nutzungsrechte klären; flow-Datei ~54 MB > GitHub-Warngrenze 50 MB)
+02_daten_ITS-Data/**/*.csv
+02_daten_ITS-Data/**/*.parquet
+# Ausnahme: Standort-Konfiguration (nur Koordinaten, keine Messdaten) wird versioniert
+!02_daten_ITS-Data/lakehouse/konfiguration/standorte.csv
+!02_daten_ITS-Data/lakehouse/konfiguration/sensoren.csv
+!02_daten_ITS-Data/lakehouse/konfiguration/ausschluesse.csv
+
+# Schulunterlagen (Kursmaterial) – nur lokal, nicht veröffentlichen
+Quellen/
+# (Datei liegt seit 01.10.2026 zentral in organisation/Wissensdatenbank/Quellen/WBS/Kapitel_09/ im Hauptrepo)
+
+# Nicht veröffentlichen (Entscheidung Geschäftsführung 05.10.2026): Vorlagen intern, Dashboard = eigenes Projekt
+06_vorlagen/
+08_dashboard_ITS-DA/
+
+# Keynote-Arbeitsdatei nur lokal (veröffentlicht werden PowerPoint und PDF, Entscheidung Geschäftsführung 05.10.2026)
+*.key
+
+# Archivordner werden nie veröffentlicht (Entscheidung Geschäftsführung 05.10.2026) – lokal bleiben sie erhalten
+_archiv/
+
+# Markdown-Quellen (_md) werden nicht veröffentlicht – Word/PDF sind die Hauptdokumente (Entscheidung Geschäftsführung 06.10.2026)
+_md/
+
+# Projektprotokolle (CSV) enthalten interne Angaben – nur lokal (Entscheidung Geschäftsführung 06.10.2026)
+01_projektmanagement/Protokolle/
+
+# Interne Arbeitsdokumente (Aufbau unseres Systems) – nur BPMN-Dateien und -Bilder veröffentlichen (Entscheidung Geschäftsführung 06.10.2026)
+07_prozesse_QM/*.md

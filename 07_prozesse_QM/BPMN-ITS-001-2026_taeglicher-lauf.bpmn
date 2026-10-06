@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_BPMN_ITS_001_2026" targetNamespace="http://ki-agentensystem.local/bpmn">
+  <!-- Dokument-Nr. BPMN-ITS-001-2026 | Täglicher Lauf der Datenpipeline (pl_daily_processing) | Version 1.0 (Entwurf) | Stand 05.10.2026
+       Projekt Azure-Datenplattform (Bee Haven). Ableitung aus BPMN-FP-003-2026. Freigabe Projektleitung offen.
+       Erzeugt mit organisation/Firmenprozesse/generator/bpmn_lib.py – Änderungen bitte im Generator vornehmen. -->
+  <bpmn:collaboration id="Collaboration_1">
+    <bpmn:participant id="Participant_1" name="Täglicher Lauf der Datenpipeline (pl_daily_processing) (BPMN-ITS-001-2026)" processRef="Process_1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_ADF" name="System: Data Factory">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Bronze</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Kopie</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_Silver</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Leeren</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_Gold</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Archiv</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Ende</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_SYN" name="System: Synapse (Spark-Pool)">
+        <bpmn:flowNodeRef>T_Silver</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_Gold</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_MON" name="System: Azure Monitor">
+        <bpmn:flowNodeRef>T_Alarm</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_ADM" name="IT-Administration">
+        <bpmn:flowNodeRef>T_Pruefen</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_DE" name="Data Engineer">
+        <bpmn:flowNodeRef>T_Beheben</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_PL" name="Projektleitung">
+        <bpmn:flowNodeRef>T_Info</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Ende_F</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Zeitplan 00:00 UTC (Trigger)">
+      <bpmn:outgoing>F1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="T_Bronze" name="rohdaten_nach_bronze: Quelle → bronze/new">
+      <bpmn:incoming>F1</bpmn:incoming>
+      <bpmn:outgoing>F2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="T_Kopie" name="Kopie je Stadt/Sensor → silver/processing">
+      <bpmn:incoming>F2</bpmn:incoming>
+      <bpmn:outgoing>F3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="T_Silver" name="Steuer-Notebook: N1 → N2 → N3 je Stadt → silver/cleaned">
+      <bpmn:incoming>F3</bpmn:incoming>
+      <bpmn:outgoing>F4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GW_Silver" name="Silver erfolgreich?">
+      <bpmn:incoming>F4</bpmn:incoming>
+      <bpmn:outgoing>F5</bpmn:outgoing>
+      <bpmn:outgoing>F10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="T_Leeren" name="processing_leeren">
+      <bpmn:incoming>F5</bpmn:incoming>
+      <bpmn:outgoing>F6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="T_Gold" name="je Stadt aus standorte.csv: N4 Gold → gold/&lt;stadt&gt;">
+      <bpmn:incoming>F6</bpmn:incoming>
+      <bpmn:outgoing>F7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="GW_Gold" name="Gold erfolgreich?">
+      <bpmn:incoming>F7</bpmn:incoming>
+      <bpmn:outgoing>F8</bpmn:outgoing>
+      <bpmn:outgoing>F11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="T_Archiv" name="bronze_archivieren: bronze/new → archive (UTC-Stempel)">
+      <bpmn:incoming>F8</bpmn:incoming>
+      <bpmn:outgoing>F9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Ende" name="Lauf erfolgreich">
+      <bpmn:incoming>F9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="T_Alarm" name="Warnregel: E-Mail bei Fehler oder Laufzeit &gt; 30 Min.">
+      <bpmn:incoming>F10</bpmn:incoming>
+      <bpmn:incoming>F11</bpmn:incoming>
+      <bpmn:outgoing>F12</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="T_Pruefen" name="Fehler prüfen (Monitor, Ausgabe des Notebooks)">
+      <bpmn:incoming>F12</bpmn:incoming>
+      <bpmn:outgoing>F13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="T_Beheben" name="Ursache beheben, Testlauf mit Gegenprobe (AA-ITS-001)">
+      <bpmn:incoming>F13</bpmn:incoming>
+      <bpmn:outgoing>F14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="T_Info" name="Information; Freigabe bei Regel- oder Kostenänderung">
+      <bpmn:incoming>F14</bpmn:incoming>
+      <bpmn:outgoing>F15</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Ende_F" name="nächster Lauf wiederholt alles">
+      <bpmn:incoming>F15</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="T_Bronze" />
+    <bpmn:sequenceFlow id="F2" sourceRef="T_Bronze" targetRef="T_Kopie" />
+    <bpmn:sequenceFlow id="F3" sourceRef="T_Kopie" targetRef="T_Silver" />
+    <bpmn:sequenceFlow id="F4" sourceRef="T_Silver" targetRef="GW_Silver" />
+    <bpmn:sequenceFlow id="F5" name="ja" sourceRef="GW_Silver" targetRef="T_Leeren" />
+    <bpmn:sequenceFlow id="F6" sourceRef="T_Leeren" targetRef="T_Gold" />
+    <bpmn:sequenceFlow id="F7" sourceRef="T_Gold" targetRef="GW_Gold" />
+    <bpmn:sequenceFlow id="F8" name="ja" sourceRef="GW_Gold" targetRef="T_Archiv" />
+    <bpmn:sequenceFlow id="F9" sourceRef="T_Archiv" targetRef="Ende" />
+    <bpmn:sequenceFlow id="F10" name="nein" sourceRef="GW_Silver" targetRef="T_Alarm" />
+    <bpmn:sequenceFlow id="F11" name="nein" sourceRef="GW_Gold" targetRef="T_Alarm" />
+    <bpmn:sequenceFlow id="F12" sourceRef="T_Alarm" targetRef="T_Pruefen" />
+    <bpmn:sequenceFlow id="F13" sourceRef="T_Pruefen" targetRef="T_Beheben" />
+    <bpmn:sequenceFlow id="F14" sourceRef="T_Beheben" targetRef="T_Info" />
+    <bpmn:sequenceFlow id="F15" sourceRef="T_Info" targetRef="Ende_F" />
+    <bpmn:textAnnotation id="N_Fehler"><bpmn:text>Bei Fehler bleiben Rohdaten in bronze/new und Arbeitskopien in silver/processing – nichts geht verloren.</bpmn:text></bpmn:textAnnotation>
+    <bpmn:association id="Assoc_N_Fehler" sourceRef="GW_Silver" targetRef="N_Fehler" />
+    <bpmn:textAnnotation id="N_Kosten"><bpmn:text>Spark-Pool kostet nur während des Laufs (Auto-pause 5 Min.); ein Lauf mit 2 Städten ca. 13 Min., ca. 0,50 €.</bpmn:text></bpmn:textAnnotation>
+    <bpmn:association id="Assoc_N_Kosten" sourceRef="T_Gold" targetRef="N_Kosten" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1"><bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1">
+    <bpmndi:BPMNShape id="Participant_1_di" bpmnElement="Participant_1" isHorizontal="true"><omgdc:Bounds x="100" y="80" width="1702" height="660" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_ADF_di" bpmnElement="Lane_ADF" isHorizontal="true"><omgdc:Bounds x="152" y="80" width="1650" height="110" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_SYN_di" bpmnElement="Lane_SYN" isHorizontal="true"><omgdc:Bounds x="152" y="190" width="1650" height="110" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_MON_di" bpmnElement="Lane_MON" isHorizontal="true"><omgdc:Bounds x="152" y="300" width="1650" height="110" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_ADM_di" bpmnElement="Lane_ADM" isHorizontal="true"><omgdc:Bounds x="152" y="410" width="1650" height="110" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_DE_di" bpmnElement="Lane_DE" isHorizontal="true"><omgdc:Bounds x="152" y="520" width="1650" height="110" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_PL_di" bpmnElement="Lane_PL" isHorizontal="true"><omgdc:Bounds x="152" y="630" width="1650" height="110" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Start_di" bpmnElement="Start"><omgdc:Bounds x="244" y="117" width="36" height="36" /><bpmndi:BPMNLabel><omgdc:Bounds x="214" y="157" width="96" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Bronze_di" bpmnElement="T_Bronze"><omgdc:Bounds x="363" y="99" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Kopie_di" bpmnElement="T_Kopie"><omgdc:Bounds x="523" y="99" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Silver_di" bpmnElement="T_Silver"><omgdc:Bounds x="683" y="209" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="GW_Silver_di" bpmnElement="GW_Silver" isMarkerVisible="true"><omgdc:Bounds x="877" y="110" width="50" height="50" /><bpmndi:BPMNLabel><omgdc:Bounds x="847" y="164" width="110" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Leeren_di" bpmnElement="T_Leeren"><omgdc:Bounds x="1003" y="99" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Gold_di" bpmnElement="T_Gold"><omgdc:Bounds x="1163" y="209" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="GW_Gold_di" bpmnElement="GW_Gold" isMarkerVisible="true"><omgdc:Bounds x="1357" y="110" width="50" height="50" /><bpmndi:BPMNLabel><omgdc:Bounds x="1327" y="164" width="110" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Archiv_di" bpmnElement="T_Archiv"><omgdc:Bounds x="1483" y="99" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Ende_di" bpmnElement="Ende"><omgdc:Bounds x="1684" y="117" width="36" height="36" /><bpmndi:BPMNLabel><omgdc:Bounds x="1654" y="157" width="96" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Alarm_di" bpmnElement="T_Alarm"><omgdc:Bounds x="843" y="319" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Pruefen_di" bpmnElement="T_Pruefen"><omgdc:Bounds x="1003" y="429" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Beheben_di" bpmnElement="T_Beheben"><omgdc:Bounds x="1163" y="539" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="T_Info_di" bpmnElement="T_Info"><omgdc:Bounds x="1323" y="649" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Ende_F_di" bpmnElement="Ende_F"><omgdc:Bounds x="1524" y="667" width="36" height="36" /><bpmndi:BPMNLabel><omgdc:Bounds x="1494" y="707" width="96" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1"><omgdi:waypoint x="280" y="135" /><omgdi:waypoint x="363" y="135" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F2_di" bpmnElement="F2"><omgdi:waypoint x="481" y="135" /><omgdi:waypoint x="523" y="135" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3"><omgdi:waypoint x="641" y="135" /><omgdi:waypoint x="662" y="135" /><omgdi:waypoint x="662" y="245" /><omgdi:waypoint x="683" y="245" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4"><omgdi:waypoint x="801" y="245" /><omgdi:waypoint x="839" y="245" /><omgdi:waypoint x="839" y="135" /><omgdi:waypoint x="877" y="135" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F5_di" bpmnElement="F5"><omgdi:waypoint x="927" y="135" /><omgdi:waypoint x="1003" y="135" /><bpmndi:BPMNLabel><omgdc:Bounds x="931" y="117" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F6_di" bpmnElement="F6"><omgdi:waypoint x="1121" y="135" /><omgdi:waypoint x="1142" y="135" /><omgdi:waypoint x="1142" y="245" /><omgdi:waypoint x="1163" y="245" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F7_di" bpmnElement="F7"><omgdi:waypoint x="1281" y="245" /><omgdi:waypoint x="1319" y="245" /><omgdi:waypoint x="1319" y="135" /><omgdi:waypoint x="1357" y="135" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F8_di" bpmnElement="F8"><omgdi:waypoint x="1407" y="135" /><omgdi:waypoint x="1483" y="135" /><bpmndi:BPMNLabel><omgdc:Bounds x="1411" y="117" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F9_di" bpmnElement="F9"><omgdi:waypoint x="1601" y="135" /><omgdi:waypoint x="1684" y="135" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F10_di" bpmnElement="F10"><omgdi:waypoint x="902" y="160" /><omgdi:waypoint x="902" y="319" /><bpmndi:BPMNLabel><omgdc:Bounds x="906" y="142" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F11_di" bpmnElement="F11"><omgdi:waypoint x="1382" y="160" /><omgdi:waypoint x="1382" y="301" /><omgdi:waypoint x="902" y="301" /><omgdi:waypoint x="902" y="319" /><bpmndi:BPMNLabel><omgdc:Bounds x="1386" y="283" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F12_di" bpmnElement="F12"><omgdi:waypoint x="961" y="355" /><omgdi:waypoint x="982" y="355" /><omgdi:waypoint x="982" y="465" /><omgdi:waypoint x="1003" y="465" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F13_di" bpmnElement="F13"><omgdi:waypoint x="1121" y="465" /><omgdi:waypoint x="1142" y="465" /><omgdi:waypoint x="1142" y="575" /><omgdi:waypoint x="1163" y="575" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F14_di" bpmnElement="F14"><omgdi:waypoint x="1281" y="575" /><omgdi:waypoint x="1302" y="575" /><omgdi:waypoint x="1302" y="685" /><omgdi:waypoint x="1323" y="685" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F15_di" bpmnElement="F15"><omgdi:waypoint x="1441" y="685" /><omgdi:waypoint x="1524" y="685" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="N_Fehler_di" bpmnElement="N_Fehler"><omgdc:Bounds x="347" y="306" width="260" height="56" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="Assoc_N_Fehler_di" bpmnElement="Assoc_N_Fehler"><omgdi:waypoint x="927" y="110" /><omgdi:waypoint x="347" y="334" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="N_Kosten_di" bpmnElement="N_Kosten"><omgdc:Bounds x="1307" y="306" width="260" height="56" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="Assoc_N_Kosten_di" bpmnElement="Assoc_N_Kosten"><omgdi:waypoint x="1281" y="209" /><omgdi:waypoint x="1307" y="334" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

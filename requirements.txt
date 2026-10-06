@@ -1,0 +1,9 @@
+# Wird gemeinsam Schritt für Schritt eingerichtet (Versionen danach mit pip freeze festschreiben)
+pandas
+pyarrow
+jupyter
+matplotlib
+numpy
+requests
+nbclient
+nbformat

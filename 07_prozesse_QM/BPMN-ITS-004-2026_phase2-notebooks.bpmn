@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_BPMN_ITS_004_2026" targetNamespace="http://ki-agentensystem.local/bpmn">
+  <!-- Dokument-Nr. BPMN-ITS-004-2026 | Phase 2 – Notebooks (Ebene 3, Schritte 15–23) | Version 1.0 (Entwurf) | Stand 05.10.2026
+       Projekt Azure-Datenplattform (Bee Haven). Ebenen-Ansatz; Freigabe Projektleitung offen.
+       Erzeugt mit organisation/Firmenprozesse/generator/bpmn_lib.py – Änderungen bitte im Generator vornehmen. -->
+  <bpmn:collaboration id="Collaboration_1">
+    <bpmn:participant id="Participant_1" name="Phase 2 – Notebooks (Ebene 3, Schritte 15–23) (BPMN-ITS-004-2026)" processRef="Process_1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_DA" name="Data Analyst">
+        <bpmn:flowNodeRef>R</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S22</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_DE" name="Data Engineer">
+        <bpmn:flowNodeRef>S15</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S17</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S18</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S19</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S20</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S21</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>S23</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>E</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="S15" name="15 VS Code: Ordner öffnen">
+      <bpmn:outgoing>F1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="S16" name="16 Umgebung beehaven">
+      <bpmn:incoming>F1</bpmn:incoming>
+      <bpmn:outgoing>F2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S17" name="17 Notebook + Kernel">
+      <bpmn:incoming>F2</bpmn:incoming>
+      <bpmn:outgoing>F3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="R" name="Datenprofil prüfen, Fachregeln festlegen (Grenzen, Ausfälle)">
+      <bpmn:incoming>F3</bpmn:incoming>
+      <bpmn:incoming>R0</bpmn:incoming>
+      <bpmn:outgoing>F4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S18" name="18 N1 Bereinigung">
+      <bpmn:incoming>F4</bpmn:incoming>
+      <bpmn:outgoing>F5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S19" name="19 N2 Datenqualität">
+      <bpmn:incoming>F5</bpmn:incoming>
+      <bpmn:outgoing>F6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="GW" name="Kontrollwerte fachlich plausibel?">
+      <bpmn:incoming>F6</bpmn:incoming>
+      <bpmn:outgoing>F7</bpmn:outgoing>
+      <bpmn:outgoing>R0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="S20" name="20 N3 Wetter, Sonnenstand">
+      <bpmn:incoming>F7</bpmn:incoming>
+      <bpmn:outgoing>F8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S21" name="21 N4 Gold">
+      <bpmn:incoming>F8</bpmn:incoming>
+      <bpmn:outgoing>F9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S22" name="22 N5 Analyse (bei Bedarf)">
+      <bpmn:incoming>F9</bpmn:incoming>
+      <bpmn:outgoing>F10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="S23" name="23 Steuer-Notebook, Synapse-Fassungen">
+      <bpmn:incoming>F10</bpmn:incoming>
+      <bpmn:outgoing>F11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="E" name="weiter mit Phase 3">
+      <bpmn:incoming>F11</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="S15" targetRef="S16" />
+    <bpmn:sequenceFlow id="F2" sourceRef="S16" targetRef="S17" />
+    <bpmn:sequenceFlow id="F3" sourceRef="S17" targetRef="R" />
+    <bpmn:sequenceFlow id="F4" sourceRef="R" targetRef="S18" />
+    <bpmn:sequenceFlow id="F5" sourceRef="S18" targetRef="S19" />
+    <bpmn:sequenceFlow id="F6" sourceRef="S19" targetRef="GW" />
+    <bpmn:sequenceFlow id="F7" name="ja" sourceRef="GW" targetRef="S20" />
+    <bpmn:sequenceFlow id="F8" sourceRef="S20" targetRef="S21" />
+    <bpmn:sequenceFlow id="F9" sourceRef="S21" targetRef="S22" />
+    <bpmn:sequenceFlow id="F10" sourceRef="S22" targetRef="S23" />
+    <bpmn:sequenceFlow id="F11" sourceRef="S23" targetRef="E" />
+    <bpmn:sequenceFlow id="R0" name="nein – Regel anpassen" sourceRef="GW" targetRef="R" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1"><bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1">
+    <bpmndi:BPMNShape id="Participant_1_di" bpmnElement="Participant_1" isHorizontal="true"><omgdc:Bounds x="100" y="80" width="1662" height="210" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_DA_di" bpmnElement="Lane_DA" isHorizontal="true"><omgdc:Bounds x="152" y="80" width="1610" height="105" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Lane_DE_di" bpmnElement="Lane_DE" isHorizontal="true"><omgdc:Bounds x="152" y="185" width="1610" height="105" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S15_di" bpmnElement="S15"><omgdc:Bounds x="229" y="220" width="36" height="36" /><bpmndi:BPMNLabel><omgdc:Bounds x="199" y="260" width="96" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S16_di" bpmnElement="S16"><omgdc:Bounds x="318" y="202" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S17_di" bpmnElement="S17"><omgdc:Bounds x="448" y="202" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="R_di" bpmnElement="R"><omgdc:Bounds x="578" y="96" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S18_di" bpmnElement="S18"><omgdc:Bounds x="708" y="202" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S19_di" bpmnElement="S19"><omgdc:Bounds x="838" y="202" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="GW_di" bpmnElement="GW" isMarkerVisible="true"><omgdc:Bounds x="1002" y="108" width="50" height="50" /><bpmndi:BPMNLabel><omgdc:Bounds x="972" y="162" width="110" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S20_di" bpmnElement="S20"><omgdc:Bounds x="1098" y="202" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S21_di" bpmnElement="S21"><omgdc:Bounds x="1228" y="202" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S22_di" bpmnElement="S22"><omgdc:Bounds x="1358" y="96" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="S23_di" bpmnElement="S23"><omgdc:Bounds x="1488" y="202" width="118" height="72" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="E_di" bpmnElement="E"><omgdc:Bounds x="1659" y="220" width="36" height="36" /><bpmndi:BPMNLabel><omgdc:Bounds x="1629" y="260" width="96" height="28" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1"><omgdi:waypoint x="265" y="238" /><omgdi:waypoint x="318" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F2_di" bpmnElement="F2"><omgdi:waypoint x="436" y="238" /><omgdi:waypoint x="448" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3"><omgdi:waypoint x="566" y="238" /><omgdi:waypoint x="572" y="238" /><omgdi:waypoint x="572" y="132" /><omgdi:waypoint x="578" y="132" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4"><omgdi:waypoint x="696" y="132" /><omgdi:waypoint x="702" y="132" /><omgdi:waypoint x="702" y="238" /><omgdi:waypoint x="708" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F5_di" bpmnElement="F5"><omgdi:waypoint x="826" y="238" /><omgdi:waypoint x="838" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F6_di" bpmnElement="F6"><omgdi:waypoint x="956" y="238" /><omgdi:waypoint x="979" y="238" /><omgdi:waypoint x="979" y="132" /><omgdi:waypoint x="1002" y="132" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F7_di" bpmnElement="F7"><omgdi:waypoint x="1052" y="132" /><omgdi:waypoint x="1075" y="132" /><omgdi:waypoint x="1075" y="238" /><omgdi:waypoint x="1098" y="238" /><bpmndi:BPMNLabel><omgdc:Bounds x="1079" y="114" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F8_di" bpmnElement="F8"><omgdi:waypoint x="1216" y="238" /><omgdi:waypoint x="1228" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F9_di" bpmnElement="F9"><omgdi:waypoint x="1346" y="238" /><omgdi:waypoint x="1352" y="238" /><omgdi:waypoint x="1352" y="132" /><omgdi:waypoint x="1358" y="132" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F10_di" bpmnElement="F10"><omgdi:waypoint x="1476" y="132" /><omgdi:waypoint x="1482" y="132" /><omgdi:waypoint x="1482" y="238" /><omgdi:waypoint x="1488" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="F11_di" bpmnElement="F11"><omgdi:waypoint x="1606" y="238" /><omgdi:waypoint x="1659" y="238" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="R0_di" bpmnElement="R0"><omgdi:waypoint x="1027" y="158" /><omgdi:waypoint x="1027" y="178" /><omgdi:waypoint x="637" y="178" /><omgdi:waypoint x="637" y="168" /><bpmndi:BPMNLabel><omgdc:Bounds x="1031" y="160" width="100" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

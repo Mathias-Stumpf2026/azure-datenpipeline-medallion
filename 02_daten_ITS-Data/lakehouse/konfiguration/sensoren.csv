@@ -1,0 +1,7 @@
+stadt,sensor,einheit_roh,min,max,bemerkung
+schwartau,weight,g,20,150,Gewicht in kg (Grenzen); Rohdaten in Gramm; < 20 kg = Waage leer oder Sensorfehler
+schwartau,humidity,%,0,100,relative Luftfeuchte im Stock
+schwartau,temperature,°C,-40,60,Stocktemperatur; Frost bleibt gültig (R7)
+wurzburg,weight,kg,20,150,Gewicht in kg (Grenzen); Rohdaten bereits in kg
+wurzburg,humidity,%,0,100,relative Luftfeuchte im Stock
+wurzburg,temperature,°C,-40,60,Stocktemperatur; Fehlerwerte bis -227 °C werden ungültig
